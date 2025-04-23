@@ -1,5 +1,5 @@
 import React from 'react';
-import { FunctionSquare as Functions } from 'lucide-react';
+import integralSvg from '/public/integral.svg';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../lib/utils.js';
 
@@ -18,8 +18,10 @@ export function MainHeader() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
           <div className="flex items-center space-x-2">
-            <Functions className="h-6 w-6 text-primary" />
-            <Link to="/" className="font-bold text-lg hover:text-primary transition-colors">
+            <Link to="/">
+            <img src={integralSvg} className="h-10 w-10 text-primary" alt="Logo" />
+            </Link>
+            <Link to="/" className="font-bold text-2xl hover:text-primary transition-colors">
               Numerical Methods Explorer
             </Link>
           </div>

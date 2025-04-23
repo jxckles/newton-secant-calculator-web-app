@@ -11,10 +11,10 @@ export function MainFooter() {
           </p>
           <div className="flex items-center space-x-4 mt-2 md:mt-0">
             <span className="text-sm text-muted-foreground flex items-center">
-              Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> for mathematical exploration
+              Developer's Github ➡️
             </span>
             <a
-              href="https://github.com/yourusername"
+              href="https://github.com/jxckles"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition-colors"
