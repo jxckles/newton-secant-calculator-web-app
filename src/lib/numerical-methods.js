@@ -1,106 +1,95 @@
-export function newtonImproved(f, df, x0, {
-  tol = 1e-6,          // Absolute tolerance
-  maxIter = 100,
-  decimalPlaces = 6,
-  useRelative = false  // Set to true for relative tolerance check
-} = {}) {
-  const MIN_TOL = 1e-10;
-  let x = x0, fx = f(x), dfx = df(x);
-  let iterations = [{
+// Updated numerical-methods.js with stability improvements
+export function newton(f, df, x0, tol = 0.5, maxIter = 20, decimalPlaces = 6) {
+  // Add minimum absolute tolerance to prevent infinite loops
+  const MIN_ABSOLUTE_TOLERANCE = 1e-10;
+  
+  let x = x0;
+  let iter = 0;
+  let fx = f(x);
+  let dfx = df(x);
+  
+  // Convert percentage tolerance to absolute, with minimum floor
+  const tolerance = Math.max(Math.abs(fx) * (tol / 100), MIN_ABSOLUTE_TOLERANCE);
+  
+  const iterations = [{
     x: Number(x.toFixed(decimalPlaces)),
     fx: Number(fx.toFixed(decimalPlaces)),
     dfx: Number(dfx.toFixed(decimalPlaces))
   }];
-  let iter = 0;
-
-  while (iter < maxIter) {
-    if (Math.abs(dfx) < MIN_TOL) {
-      return { error: "Derivative too close to zero", iterations, converged: false };
+  
+  while (Math.abs(fx) > tolerance && iter < maxIter) {
+    if (Math.abs(dfx) < 1e-10) {
+      throw new Error('Derivative is too close to zero. Method failed to converge.');
     }
-
-    let delta = fx / dfx;
-    let xNew = x - delta;
-
-    if (
-      (!useRelative && Math.abs(delta) < tol) ||
-      (useRelative && Math.abs(delta / xNew) < tol)
-    ) {
-      return {
-        root: Number(xNew.toFixed(decimalPlaces)),
-        iterations,
-        converged: true,
-        tolerance: tol
-      };
-    }
-
-    x = xNew;
+    
+    const delta = fx / dfx;
+    x = x - delta;
+    
     fx = f(x);
     dfx = df(x);
     iter++;
+    
     iterations.push({
       x: Number(x.toFixed(decimalPlaces)),
       fx: Number(fx.toFixed(decimalPlaces)),
       dfx: Number(dfx.toFixed(decimalPlaces))
     });
   }
-
+  
+  if (iter >= maxIter && Math.abs(fx) > tolerance) {
+    throw new Error(`Maximum iterations (${maxIter}) reached. Last error: ${Math.abs(fx).toExponential(2)}`);
+  }
+  
   return {
-    error: `Max iterations (${maxIter}) reached.`,
+    root: Number(x.toFixed(decimalPlaces)),
     iterations,
-    converged: false
+    tolerance: tolerance
   };
 }
 
-export function secantImproved(f, x0, x1, {
-  tol = 1e-6,
-  maxIter = 100,
-  decimalPlaces = 6,
-  useRelative = false
-} = {}) {
-  const MIN_TOL = 1e-10;
-  let xPrev = x0, x = x1, fPrev = f(xPrev), fx = f(x);
-  let iterations = [
-    { x: Number(xPrev.toFixed(decimalPlaces)), fx: Number(fPrev.toFixed(decimalPlaces)) },
+export function secant(f, x0, x1, tol = 0.5, maxIter = 20, decimalPlaces = 6) {
+  const MIN_ABSOLUTE_TOLERANCE = 1e-10;
+  
+  let x_prev = x0;
+  let x = x1;
+  let iter = 0;
+  
+  let f_prev = f(x_prev);
+  let fx = f(x);
+  
+  const tolerance = Math.max(Math.abs(fx) * (tol / 100), MIN_ABSOLUTE_TOLERANCE);
+  
+  const iterations = [
+    { x: Number(x_prev.toFixed(decimalPlaces)), fx: Number(f_prev.toFixed(decimalPlaces)) },
     { x: Number(x.toFixed(decimalPlaces)), fx: Number(fx.toFixed(decimalPlaces)) }
   ];
-  let iter = 0;
-
-  while (iter < maxIter) {
-    let denominator = fx - fPrev;
-    if (Math.abs(denominator) < MIN_TOL) {
-      return { error: "Secant division by near-zero.", iterations, converged: false };
+  
+  while (Math.abs(fx) > tolerance && iter < maxIter) {
+    const denominator = fx - f_prev;
+    if (Math.abs(denominator) < 1e-10) {
+      throw new Error('Division by near-zero value. Method failed to converge.');
     }
-
-    let delta = fx * (x - xPrev) / denominator;
-    let xNew = x - delta;
-
-    if (
-      (!useRelative && Math.abs(delta) < tol) ||
-      (useRelative && Math.abs(delta / xNew) < tol)
-    ) {
-      return {
-        root: Number(xNew.toFixed(decimalPlaces)),
-        iterations,
-        converged: true,
-        tolerance: tol
-      };
-    }
-
-    xPrev = x;
-    fPrev = fx;
-    x = xNew;
+    
+    const delta = fx * (x - x_prev) / denominator;
+    x_prev = x;
+    f_prev = fx;
+    x = x - delta;
     fx = f(x);
     iter++;
-
+    
     iterations.push({
       x: Number(x.toFixed(decimalPlaces)),
       fx: Number(fx.toFixed(decimalPlaces))
     });
   }
-
+  
+  if (iter >= maxIter && Math.abs(fx) > tolerance) {
+    throw new Error(`Maximum iterations (${maxIter}) reached. Last error: ${Math.abs(fx).toExponential(2)}`);
+  }
+  
   return {
-    error: `Max iterations (${maxIter}) reached.`,
+    root: Number(x.toFixed(decimalPlaces)),
     iterations,
-    converged: false
+    tolerance: tolerance
   };
 }
