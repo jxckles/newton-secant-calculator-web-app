@@ -19,7 +19,7 @@ const Comparison = () => {
   const [secantGuess1, setSecantGuess1] = useState('3');
   const [secantGuess2, setSecantGuess2] = useState('2');
   const [tolerancePercentage, setTolerancePercentage] = useState('0.5');
-  const [significantDecimals, setSignificantDecimals] = useState('4');
+  const [significantDecimals, setSignificantDecimals] = useState('6');
   const [maxIterations, setMaxIterations] = useState('20');
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
@@ -57,7 +57,7 @@ const Comparison = () => {
       setSecantGuess1(currentCalculation.secantGuess1);
       setSecantGuess2(currentCalculation.secantGuess2);
       setTolerancePercentage(currentCalculation.tolerancePercentage || '0.01');
-      setSignificantDecimals(currentCalculation.significantDecimals || '4');
+      setSignificantDecimals(currentCalculation.significantDecimals || '6');
       setMaxIterations(currentCalculation.maxIterations);
       setResults(currentCalculation.results);
     }
@@ -273,7 +273,8 @@ const Comparison = () => {
                     min="1"
                     max="15"
                     value={significantDecimals} 
-                    onChange={(e) => setSignificantDecimals(e.target.value)} 
+                    onChange={(e) => setSignificantDecimals(e.target.value)}
+                    disabled
                   />
                 </motion.div>
               </div>
